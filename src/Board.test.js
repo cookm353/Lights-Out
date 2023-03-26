@@ -11,6 +11,11 @@ it("renders", () => {
 // Snapshot test
 
 it("matches snapshot", () => {
-    const { asFragment } = render(<Board />)
+    const { asFragment } = render(<Board nrows={3} ncols={3} chanceLightStartsOn={0} />)
     expect(asFragment()).toMatchSnapshot()
+})
+
+it("shows you won message", () => {
+    const {getByText} = render(<Board nrows={3} ncols={3} chanceLightStartsOn={0} />)
+    expect(getByText("You won!")).toBeTruthy()
 })
