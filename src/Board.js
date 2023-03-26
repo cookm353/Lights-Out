@@ -33,12 +33,20 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
     let initialBoard = [];
-    // TODO: create array-of-arrays of true/false values
+    for (let i = 0; i < nrows; i++) {
+      const row = []
+      for (let j = 0; j < ncols; j ++) {
+        row.push(Math.random() < chanceLightStartsOn)
+      }
+      initialBoard.push(row)
+    }
     return initialBoard;
   }
 
   function hasWon() {
-    // TODO: check the board in state to determine whether the player has won.
+    const allTrue = board.flat().every(val => val)
+    const allFalse = board.flat().every(val => !val)
+    return allTrue || allFalse
   }
 
   function flipCellsAround(coord) {
@@ -53,21 +61,63 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
         }
       };
 
-      // TODO: Make a (deep) copy of the oldBoard
+      const boardCopy = []
+
+      for (let row of oldBoard) {
+        const newRow = [...row]
+        boardCopy.push(newRow)
+      }
 
       // TODO: in the copy, flip this cell and the cells around it
+      boardCopy[y][x] = !boardCopy[y][x]
 
-      // TODO: return the copy
+      if (y < ncols - 1) {
+        boardCopy[y + 1][x] = !boardCopy[y + 1][x]
+      } if (y > 0) {
+        boardCopy[y - 1][x] = !boardCopy[y - 1][x]
+      } if (x <  nrows - 1) {
+        boardCopy[y][x + 1] = !boardCopy[y][x + 1]
+      } if (x > 0) {
+        boardCopy[y][x - 1] = !boardCopy[y][x - 1]
+      }
+
+      
+      return boardCopy
     });
   }
 
   // if the game is won, just show a winning msg & render nothing else
+  
 
+  if (hasWon()) {
+    return <div>You won!</div>
+  }
   // TODO
 
   // make table board
+  let tableBoard = []
 
-  // TODO
+  for (let y = 0; y < nrows; y ++) {
+    let row = []
+    for (let x = 0; x < ncols; x ++) {
+      const coord = `${y}-${x}`
+      row.push(
+        <Cell
+          key={coord}
+          isLit={board[y][x]}
+          flipCellsAroundMe={() => flipCellsAround(coord)}
+        />
+      )
+    }
+    tableBoard.push(<tr key={y}>{row}</tr>)
+  }
+  return (
+    <table>
+      <tbody>{tableBoard}</tbody>
+    </table>
+  )
 }
 
 export default Board;
+
+
